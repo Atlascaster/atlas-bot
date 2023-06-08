@@ -1,0 +1,70 @@
+[tool.poetry]
+name = "atlas-bot"
+version = "0.1.0"
+description = ""
+authors = ["alex paden, vincent liao, jacob friedman"]
+readme = "README.md"
+packages = [{include = "atlas"}]
+
+[tool.poetry.dependencies]
+python = ">=3.9,<3.11"
+pyupgrade = "^3.3.1"
+isort = "^5.12.0"
+black = "^23.1.0"
+pytest-cov = "^4.0.0"
+flake8 = "^6.0.0"
+mypy = "^1.1.1"
+python-dotenv = "^0.21.1"
+farcaster = "^0.7.8"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.dev-dependencies]
+
+[tool.black]
+# https://github.com/psf/black
+target-version = ["py310"]
+line-length = 88
+color = true
+
+exclude = '''
+/(
+    \.git
+    | \.hg
+    | \.mypy_cache
+    | \.tox
+    | \.venv
+    | _build
+    | buck-out
+    | build
+    | dist
+    | env
+    | venv
+)/
+'''
+
+[tool.isort]
+# https://github.com/timothycrosley/isort/
+py_version = 310
+line_length = 88
+
+known_typing = ["typing", "types", "typing_extensions", "mypy", "mypy_extensions"]
+sections = ["FUTURE", "TYPING", "STDLIB", "THIRDPARTY", "FIRSTPARTY", "LOCALFOLDER"]
+include_trailing_comma = true
+profile = "black"
+multi_line_output = 3
+indent = 4
+color_output = true
+
+[tool.flake8]
+ignore = ['E231', 'E241']
+per-file-ignores = [
+    '__init__.py:F401',
+]
+max-line-length = 88
+count = true
+
+[tool.coverage-badge]
+skip-covered = true
