@@ -2,6 +2,7 @@ import logging
 import os
 
 from farcaster.models import Parent
+from farcaster import Warpcast
 
 from atlas.commands.hash import Hash
 
@@ -11,8 +12,8 @@ HELP_COM = "help"
 
 
 class Commands:
-    def __init__(self, fcc, bot_username):
-        self.fcc = fcc
+    def __init__(self, fcc: Warpcast, bot_username):
+        self.fcc: Warpcast = fcc
         self.bot_username = bot_username
         self.hash = Hash(fcc)
 
@@ -31,8 +32,6 @@ class Commands:
     def handle_generic_command(self, notif, command, perform_func):
         if self.should_command_run(
             notif.content.cast.hash,
-            command,
-            notif.content.cast.author.username,
         ):
             try:
                 perform_func(notif)
@@ -46,11 +45,13 @@ class Commands:
     def handle_help_command(self, notif):
         self.handle_generic_command(notif, HELP_COM, self.perform_help_command)
 
-    def should_command_run(self, hash: str, type: str, username: str):
+    def should_command_run(self, hash: str):
         try:
-            # update to check if bot has liked cast
-            # TODO
-            pass
+            likes = self.fcc.get_cast_likes(cast_hash=hash, limit=100)
+            for like in likes.likes:
+                if like.reactor.username == self.bot_username.lstrip('@'):
+                    return False
+            return True
         except Exception as e:
             self.handle_error(e, "Error while checking if command should run: {hash}")
             return False
@@ -60,9 +61,7 @@ class Commands:
             if DEV_MODE:
                 logging.info("Marking command as run (but dev mode)")
             else:
-                # update to use like cast
-                # TODO
-                pass
+                self.fcc.like_cast(cast_hash=hash)
         except Exception as e:
             self.handle_error(e, "Error while marking command as run")
 
@@ -98,7 +97,6 @@ class Commands:
         reply = (
             "Thanks for your interest in atlas bot! "
             "Tag @alexpaden for further assistance. "
-            # "https://i.imgur.com/XuSem8Q.png"
         )
         parent = Parent(fid=notif.content.cast.author.fid, hash=notif.content.cast.hash)
         self.post_to_farcaster(text=reply, parent=parent)
