@@ -1,14 +1,17 @@
 import logging
 import os
 
-from farcaster.models import Parent
+from dotenv import load_dotenv
 from farcaster import Warpcast
+from farcaster.models import Parent
 
 from atlas.commands.summary import Summary
 
-DEV_MODE = bool(os.getenv("DEV_MODE") == "True")
-SUMMARY_COM = "summary"  # This is an example command not meant for production
+load_dotenv()
+DEV_MODE = bool(os.getenv("DEV_MODE") == "TRUE")
+SUMMARY_COM = "summary"
 HELP_COM = "help"
+print(DEV_MODE)
 
 
 class Commands:
@@ -49,7 +52,7 @@ class Commands:
         try:
             likes = self.fcc.get_cast_likes(cast_hash=hash, limit=100)
             for like in likes.likes:
-                if like.reactor.username == self.bot_username.lstrip('@'):
+                if like.reactor.username == self.bot_username.lstrip("@"):
                     return False
             return True
         except Exception as e:
