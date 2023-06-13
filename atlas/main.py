@@ -2,6 +2,7 @@ import logging
 import os
 import time
 
+import openai
 from dotenv import load_dotenv
 from farcaster import Warpcast
 
@@ -19,6 +20,8 @@ logging.basicConfig(
 def configure_main_function():
     fcc = Warpcast(access_token=os.getenv("FARC_SECRET"))
     bot_username = os.getenv("USERNAME")
+    openai.api_key = os.getenv("OPENAI_KEY")
+
 
     return Commands(
         fcc=fcc,

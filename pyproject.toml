@@ -17,6 +17,7 @@ mypy = "^1.1.1"
 python-dotenv = "^0.21.1"
 farcaster = "^0.7.8"
 autoflake = "^2.1.1"
+openai = "^0.27.8"
 
 [build-system]
 requires = ["poetry-core"]
