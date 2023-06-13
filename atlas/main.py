@@ -2,7 +2,6 @@ import logging
 import os
 import time
 
-# import openai
 from dotenv import load_dotenv
 from farcaster import Warpcast
 
@@ -10,16 +9,15 @@ from atlas.commands.command_manager import Commands
 
 load_dotenv()
 
+logging.basicConfig(
+    # filename="bot.log",
+    level=logging.INFO,  # Set the log level to INFO
+    format="%(asctime)s %(message)s",
+)
+
 
 def configure_main_function():
-    logging.basicConfig(
-        filename="bot.log",
-        level=logging.ERROR,
-        format="%(asctime)s %(message)s",
-    )
-
     fcc = Warpcast(access_token=os.getenv("FARC_SECRET"))
-    # openai.api_key = os.getenv("OPENAI_KEY")
     bot_username = os.getenv("USERNAME")
 
     return Commands(
