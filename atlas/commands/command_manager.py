@@ -4,10 +4,10 @@ import os
 from farcaster.models import Parent
 from farcaster import Warpcast
 
-from atlas.commands.hash import Hash
+from atlas.commands.summary import Summary
 
 DEV_MODE = bool(os.getenv("DEV_MODE") == "True")
-HASH_COM = "hash"  # This is an example command not meant for production
+SUMMARY_COM = "summary"  # This is an example command not meant for production
 HELP_COM = "help"
 
 
@@ -15,11 +15,11 @@ class Commands:
     def __init__(self, fcc: Warpcast, bot_username):
         self.fcc: Warpcast = fcc
         self.bot_username = bot_username
-        self.hash = Hash(fcc)
+        self.summary = Summary(fcc)
 
     def handle_command(self, notif):
         command_mapping = {
-            HASH_COM: self.handle_hash_command,
+            SUMMARY_COM: self.handle_summary_command,
             HELP_COM: self.handle_help_command,
         }
 
@@ -39,8 +39,8 @@ class Commands:
             except Exception as e:
                 self.handle_error(e, f"Error while handling {command} command")
 
-    def handle_hash_command(self, notif):
-        self.handle_generic_command(notif, HASH_COM, self.perform_hash_command)
+    def handle_summary_command(self, notif):
+        self.handle_generic_command(notif, SUMMARY_COM, self.perform_summary_command)
 
     def handle_help_command(self, notif):
         self.handle_generic_command(notif, HELP_COM, self.perform_help_command)
@@ -86,11 +86,11 @@ class Commands:
             self.handle_error(e, "Error while posting to farcaster")
 
     # This is a generic command example not meant for production
-    def perform_hash_command(self, notif):
-        logging.info("Performing hash command")
-        reply, parent = self.hash.start_hash(notif.content.cast)
+    def perform_summary_command(self, notif):
+        logging.info("Performing summary command")
+        reply, parent = self.summary.start_summary(notif.content.cast)
         self.post_to_farcaster(text=reply, parent=parent)
-        logging.info("Hash command completed")
+        logging.info("Summary command completed")
 
     def perform_help_command(self, notif):
         logging.info("Performing help command")
