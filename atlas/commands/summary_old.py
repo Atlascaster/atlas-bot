@@ -1,6 +1,5 @@
 from farcaster import Warpcast
 from farcaster.models import Parent
-import openai
 
 
 class Summary:
@@ -19,6 +18,3 @@ class Summary:
         parent = Parent(fid=call_cast.author.fid, hash=call_cast.hash)
 
         return text, parent
-
-
-    def

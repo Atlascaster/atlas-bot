@@ -1,12 +1,11 @@
-import openai
 import logging
+
+import openai
+from dotenv import load_dotenv
 from farcaster import Warpcast
 from farcaster.models import Parent
-import os
-from dotenv import load_dotenv
 
 from atlas.commands.text2img import Text2Img
-
 
 load_dotenv()
 
