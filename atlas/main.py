@@ -20,8 +20,7 @@ logging.basicConfig(
 def configure_main_function():
     fcc = Warpcast(access_token=os.getenv("FARC_SECRET"))
     bot_username = os.getenv("USERNAME")
-    openai.api_key = os.getenv("OPENAI_KEY")
-
+    openai.api_key = os.getenv("OPENAI_API_KEY")
 
     return Commands(
         fcc=fcc,

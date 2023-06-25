@@ -1,6 +1,18 @@
+import openai
+import logging
 from farcaster import Warpcast
 from farcaster.models import Parent
-import openai
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+# openai.api_key = os.getenv("OPENAI_API_KEY")
+
+
+class Cast:
+    def __init__(self, username, content):
+        self.username = username
+        self.content = content
 
 
 class Summary:
@@ -8,16 +20,42 @@ class Summary:
         self.fcc = fcc
 
     def start_summary(self, call_cast):
-        call_cast = self.fcc.get_cast(call_cast.hash).cast
-        all_casts = self.fcc.get_all_casts_in_thread(call_cast.thread_hash).casts
+        try:
+            call_cast = self.fcc.get_cast(call_cast.hash).cast
+            all_casts = self.fcc.get_all_casts_in_thread(call_cast.thread_hash).casts
 
-        for cast in all_casts:
-            if cast.parent_hash == cast.thread_hash:
-                print(cast.author.username + ": " + cast.text)
+            replies = [Cast(cast.author.username, cast.text) for cast in all_casts]
+            root_cast = self.fcc.get_cast(hash=call_cast.thread_hash).cast
+            text = self.summarize_replies(root_cast, replies)
 
-        text = f"This is a sample command"
-        parent = Parent(fid=call_cast.author.fid, hash=call_cast.hash)
+            print(text)  # This is printing the output of GPT
+            parent = Parent(fid=call_cast.author.fid, hash=call_cast.hash)
 
-        return text, parent
+            return text, parent
+        except Exception as e:
+            logging.error(f"Error in start_summary method: {e}")
+            raise
 
+    def summarize_replies(self, root_cast, replies):
+        try:
+            # print("root " + root_cast.author.username)
+            text_input = "Question: " + root_cast.text + "n"
 
+            for i, reply in enumerate(replies):
+                text_input += (
+                    f'Reply {i + 1}: {reply.username} said, "{reply.content}"n'
+                )
+
+            text_input += (
+                "nSummarize the entire thing laconically, don't mention users."
+            )
+
+            response = openai.ChatCompletion.create(
+                model="gpt-3.5-turbo",
+                messages=[{"role": "user", "content": text_input}],
+            )
+
+            return response.choices[0].message["content"]
+        except Exception as e:
+            logging.error(f"Error in summarize_replies method: {e}")
+            raise
