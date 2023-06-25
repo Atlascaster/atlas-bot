@@ -5,8 +5,10 @@ from farcaster.models import Parent
 import os
 from dotenv import load_dotenv
 
+from atlas.commands.text2img import Text2Img
+
+
 load_dotenv()
-# openai.api_key = os.getenv("OPENAI_API_KEY")
 
 
 class Cast:
@@ -18,6 +20,7 @@ class Cast:
 class Summary:
     def __init__(self, fcc: Warpcast):
         self.fcc = fcc
+        self.t2i = Text2Img()
 
     def start_summary(self, call_cast):
         try:
@@ -55,7 +58,14 @@ class Summary:
                 messages=[{"role": "user", "content": text_input}],
             )
 
-            return response.choices[0].message["content"]
+            summary = response.choices[0].message.content
+            if len(summary) > 320:
+                print("summary" + summary)
+                img_url = self.t2i.convert(text=summary)
+                print("url " + img_url)
+                summary = img_url
+                print(img_url)
+            return summary
         except Exception as e:
             logging.error(f"Error in summarize_replies method: {e}")
             raise
