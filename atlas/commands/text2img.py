@@ -10,11 +10,12 @@ class Text2Img:
     def __init__(self):
         self.font_name_regular = "./atlas/helpers/fonts/SourceSansPro-Light.ttf"
         self.font_name_bold = "./atlas/helpers/fonts/SourceSansPro-Regular.ttf"
-        self.font_size = 25
+        self.font_size = 20  # reduce font size for better mobile view
         self.color = "black"
         self.image_file = None
         self.padding = 100
-        self.desired_width = 2000
+        self.desired_width = 750  # reduce desired width for better mobile view
+        self.line_spacing = 10  # add line spacing attribute
 
     def convert(self, text: str):
         font_regular = ImageFont.truetype(self.font_name_regular, self.font_size)
@@ -48,7 +49,9 @@ class Text2Img:
         for line in text.split("\n"):
             line_w = font_regular.getsize(line)[0]
             max_w = max(max_w, line_w)
-            total_h = font_regular.getsize(line)[1]
+            total_h += (
+                font_regular.getsize(line)[1] + self.line_spacing
+            )  # add line spacing to total height
         return max_w, total_h
 
     def wrap_text(self, text, font, max_width):

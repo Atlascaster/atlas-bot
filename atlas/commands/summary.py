@@ -60,11 +60,8 @@ class Summary:
 
             summary = response.choices[0].message.content
             if len(summary) > 320:
-                print("summary" + summary)
                 img_url = self.t2i.convert(text=summary)
-                print("url " + img_url)
                 summary = img_url
-                print(img_url)
             return summary
         except Exception as e:
             logging.error(f"Error in summarize_replies method: {e}")
