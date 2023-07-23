@@ -41,16 +41,14 @@ class Summary:
     def summarize_replies(self, root_cast, replies):
         try:
             # print("root " + root_cast.author.username)
-            text_input = "Question: " + root_cast.text + "n"
+            text_input = "Question: " + root_cast.text + "\n"
 
             for i, reply in enumerate(replies):
                 text_input += (
-                    f'Reply {i + 1}: {reply.username} said, "{reply.content}"n'
+                    f'Reply {i + 1}: {reply.username} said, "{reply.content}"\n'
                 )
 
-            text_input += (
-                "nSummarize the entire thing laconically, don't mention users."
-            )
+            text_input += "Summarize the entire thing laconically, don't mention users."
 
             response = openai.ChatCompletion.create(
                 model="gpt-3.5-turbo",
