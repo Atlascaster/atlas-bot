@@ -49,15 +49,3 @@ def stringify_messages(
     out += "Respond with a question, keep conversation interesting, use curious tone, "
     out += "respond laconically, no need to @-mention anyone."
     return out
-
-
-th = "0xdf866226f22f9f36331038421e7eed4cc7b726e2"
-h = "0x3879672d31a259330a61d5bc77df5693ac9bd121"
-cs = get_conversation(th, h)
-ms = stringify_messages(cs)
-response = openai.ChatCompletion.create(
-    model="gpt-4", messages=[{"role": "user", "content": ms}]
-)
-
-content = response["choices"][0]["message"]["content"]
-print(content)

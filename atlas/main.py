@@ -5,7 +5,9 @@ import time
 import openai
 from dotenv import load_dotenv
 from farcaster import Warpcast
+from farcaster.models import Parent
 
+import atlas.commands.conversator as conversator
 from atlas.commands.command_manager import Commands
 
 load_dotenv()
@@ -34,7 +36,27 @@ def start_notification_stream(commands_instance: Commands):
 
     for notif in fcc.stream_notifications():
         if notif and notif.content.cast.text.startswith(bot_username):
-            commands_instance.handle_command(notif)
+            # commands_instance.handle_command(notif)
+            pass
+
+        if (
+            notif
+            and notif.content.cast.text.startswith(bot_username)
+            and "conversator" in notif.content.cast.text
+            and notif.content.cast.parent_hash is not None
+        ):
+            print(notif)
+            hash = notif.content.cast.hash
+            parent_hash = notif.content.cast.parent_hash
+            thread_hash = notif.content.cast.thread_hash
+            cs = conversator.get_conversation(thread_hash, parent_hash)  # type: ignore
+            ms = conversator.stringify_messages(cs)
+            response = openai.ChatCompletion.create(
+                model="gpt-4", messages=[{"role": "user", "content": ms}]
+            )
+            response = response["choices"][0]["message"]["content"]
+            parent = Parent(fid=notif.actor.fid, hash=hash)
+            fcc.post_cast(response, parent=parent)
 
 
 def main():
