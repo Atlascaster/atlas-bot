@@ -44,8 +44,8 @@ def start_notification_stream(commands_instance: Commands):
             and notif.content.cast.text.startswith(bot_username)
             and "conversator" in notif.content.cast.text
             and notif.content.cast.parent_hash is not None
+            and notif.timestamp > int(time.time() * 1000) - 300000  # 5 minutes
         ):
-            print(notif)
             hash = notif.content.cast.hash
             parent_hash = notif.content.cast.parent_hash
             thread_hash = notif.content.cast.thread_hash
