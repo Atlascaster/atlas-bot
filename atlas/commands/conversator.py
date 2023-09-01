@@ -39,7 +39,7 @@ def get_conversation(thread_hash: str, cast_hash: str) -> List[Dict[str, Any]]:
 def stringify_messages(
     messages: List[Dict[str, Any]], total_messages: int = 8, username: str = "picture"
 ) -> str:
-    out = ""
+    out = "Here's the conversation so far:\n\n"
     messages = messages[-total_messages:]
     for message in messages:
         out += f"@{message['username']}: {message['text']}\n"

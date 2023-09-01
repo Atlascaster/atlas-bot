@@ -36,25 +36,30 @@ def start_notification_stream(commands_instance: Commands):
 
     for notif in fcc.stream_notifications():
         if notif and notif.content.cast.text.startswith(bot_username):
-            # commands_instance.handle_command(notif)
+            commands_instance.handle_command(notif)
             pass
 
         if (
             notif
-            and notif.content.cast.text.startswith(bot_username)
-            and "conversator" in notif.content.cast.text
             and notif.content.cast.parent_hash is not None
             and notif.timestamp > int(time.time() * 1000) - 300000  # 5 minutes
         ):
-            hash = notif.content.cast.hash
-            parent_hash = notif.content.cast.parent_hash
             thread_hash = notif.content.cast.thread_hash
-            cs = conversator.get_conversation(thread_hash, parent_hash)  # type: ignore
+            hash = notif.content.cast.hash
+
+            root = fcc.get_cast(hash=thread_hash)  # type: ignore
+            if "qqq" not in root.cast.text:
+                print(f"not replying to {notif.content.cast.hash}")
+                continue
+
+            logging.info(f"replying to {notif.content.cast.hash}")
+            cs = conversator.get_conversation(thread_hash, hash)  # type: ignore
             ms = conversator.stringify_messages(cs)
             response = openai.ChatCompletion.create(
                 model="gpt-4", messages=[{"role": "user", "content": ms}]
             )
             response = response["choices"][0]["message"]["content"]
+            logging.info(f"gpt4 response: {response}")
             parent = Parent(fid=notif.actor.fid, hash=hash)
             fcc.post_cast(response, parent=parent)
 
@@ -68,6 +73,7 @@ def main():
         return
 
     logging.info("Starting notification stream in main")
+
     while True:
         try:
             start_notification_stream(commands_instance)
