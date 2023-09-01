@@ -48,7 +48,7 @@ def start_notification_stream(commands_instance: Commands):
             hash = notif.content.cast.hash
 
             root = fcc.get_cast(hash=thread_hash)  # type: ignore
-            if "qqq" not in root.cast.text:
+            if "conversator" not in root.cast.text:
                 print(f"not replying to {notif.content.cast.hash}")
                 continue
 
